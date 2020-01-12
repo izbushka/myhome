@@ -1,4 +1,4 @@
-#Database structure
+# Database structure
 See sensors.sqlite and graphs.sqlite
 
 DB location should be at /home/db/sqlite
