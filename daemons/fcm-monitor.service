@@ -1,0 +1,19 @@
+[Unit]
+Description=FCM Client script
+After=syslog.target network.target
+Requires=network.target
+
+
+[Service]
+Type=forking
+User=root
+Group=root
+WorkingDirectory=/home/scripts/libs
+PIDFile=/var/run/fcm-monitor.py.pid
+ExecStart=/home/scripts/daemons/fcm-monitor.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

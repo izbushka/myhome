@@ -1,0 +1,64 @@
+#!/usr/bin/python
+
+#str(sys.argv)
+import sys, os
+import string
+import json
+import time
+sys.path.append('/home/scripts/libs')
+from mySensors import mySensors
+import texttable as tt
+
+mySensors = mySensors()
+
+sensors = mySensors.getSensors()
+
+#print sensors
+header = {}
+data = [[]]
+
+for id, sensor in sensors.items():
+    del sensor['updated']
+    del sensor['group']
+    if not header:
+        header = sensor.keys()
+        header[0] = 'ID'
+        #header[5] = 'Changed'
+    #print sensor['name']
+    if sensor['localTime']: sensor['localTime'] = string.replace(sensor['localTime'][5:], '-', '/')
+    if sensor['duration']: 
+        _days = int(int(sensor['duration']) / (3600*24));
+        _format = '%H:%M' if sensor['duration'] > 20*3600  else '%H:%M:%S'
+        _time = time.strftime(_format, time.gmtime(sensor['duration']))
+        if _days > 2: sensor['duration'] = str(_days) + ' days'
+        elif _days > 0: sensor['duration'] = str(_days) + 'd ' + _time
+        else:  sensor['duration'] = _time
+        #sensor['duration'] = time.strftime(' %H:%M:%S', time.gmtime(sensor['duration']))
+    if str(sensor['state']).replace('.','',1).isdigit():
+        rounded = "%.1f" % float(sensor['state'])
+        sensor['state'] = str(rounded)
+        #print(rounded);
+    if str(sensor['sensor']).isdigit():
+        sensor['sensor'] = '"' + str(sensor['sensor']) + '"'
+    data.append(sensor.values())
+
+termH, termW = os.popen('stty size', 'r').read().split()
+
+tab = tt.Texttable()
+tab.add_rows(data)
+#tab.set_cols_dtype([
+   #'t',  # text
+   #'f',  # float (decimal)
+   #'e',  # float (exponent)
+   #'i',  # integer
+   #'a'   # auto
+   #'a'   # auto
+#]) # automatic
+tab.set_cols_dtype(['a','a','a','t','t','a']);
+tab.set_cols_align(["l"] * 6)
+tab.set_precision(1)
+tab.header(header)
+
+tab.set_cols_width([2, 20, 6, 8, (11 + (int(termW) - 80)), 14])
+print tab.draw()
+

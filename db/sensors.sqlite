@@ -1,0 +1,17 @@
+CREATE TABLE sensors (sensor_id INTEGER PRIMARY KEY, type char(20), sensor char(30), name text, enabled char(3) not null default 'YES', `group` char(20), normal_state varchar(5));
+CREATE TABLE IF NOT EXISTS "states"(sensor_id integer, state char(5), updated DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')));
+CREATE TABLE sensors_actions (sensor_id INTEGER, action_id INTEGER, delay int not null default 0, runs int not null default 1, repeat_delay int not null default 0, state varchar(3) not null default 'BOTH', run_order int not null default 1);
+CREATE TABLE actions (action_id INTEGER PRIMARY KEY, name char(50), command char(255), enabled char (3) not null default 'YES');
+CREATE TABLE IF NOT EXISTS "states_log"(sensor_id integer, state char(5), updated DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')));
+CREATE TABLE commands (cmd_id INTEGER PRIMARY KEY, cmd varchar(255), interval int after cmd);
+CREATE TABLE IF NOT EXISTS "memcache" (key varchar(255) UNIQUE, val varchar(255), updated int unsigned, expired int unsigned);
+CREATE TRIGGER update_states AFTER UPDATE ON states
+BEGIN
+INSERT INTO states_log VALUES (new.sensor_id, new.state, new.updated);
+DELETE FROM states_log WHERE rowid NOT IN (SELECT rowid FROM states_log ORDER BY updated DESC limit 2000);
+END;
+CREATE TRIGGER insert_states AFTER INSERT ON states
+BEGIN
+INSERT INTO states_log VALUES (new.sensor_id, new.state, new.updated);
+DELETE FROM states_log WHERE rowid NOT IN (SELECT rowid FROM states_log ORDER BY updated DESC limit 2000);
+END;

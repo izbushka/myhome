@@ -1,0 +1,14 @@
+[telegram]
+token: xxxxxxxxxxxxxxxxx
+groupChannel: 00000000000
+
+[fcm]
+url: https://example.com
+websocket: %s(url)s/websocket
+userId: 4324
+
+[mqtt]
+user: user1
+password: pass1
+host: 192.168.1.1
+port: 1888

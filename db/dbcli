@@ -1,0 +1,22 @@
+#!/bin/bash
+DB=$1
+ACTION=$2
+
+if [ "$DB" = "" ]
+then
+    DB='sensors'
+fi
+
+ramPath='/home/ram/db'
+sdPath='/home/db/sqlite'
+sdFile=$sdPath/${DB}.sqlite3
+ramFile=$ramPath/${DB}.sqlite3
+
+if [ "$ACTION" != "disk" ]
+then
+    echo $ramFile
+    sqlite3 $ramFile
+else
+    echo $sdFile
+    sqlite3 $sdFile
+fi

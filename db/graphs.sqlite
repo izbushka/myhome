@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS "sensors_data" (sensor_id integer, value DECIMAL(7,2), updated DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')));
+CREATE TABLE sensors (sensor_id integer, data_type char(10), enabled char(3));
+CREATE TABLE week (sensor_id integer, value DECIMAL(7,2), date datetime);
+CREATE TABLE month (sensor_id integer, value DECIMAL(7,2), date datetime);
+CREATE TABLE year (sensor_id integer, value DECIMAL(7,2), date datetime);

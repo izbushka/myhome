@@ -1,0 +1,8 @@
+#!/bin/bash
+TEMP=`awk '{printf "%.0f\n", $1/1000}' /sys/class/thermal/thermal_zone0/temp`
+if [ $TEMP -lt 56 ]
+then
+    echo 'OK';
+else
+    echo 'WARN';
+fi

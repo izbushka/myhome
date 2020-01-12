@@ -1,0 +1,17 @@
+[Unit]
+Description=GPIO Monitor script
+After=syslog.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+WorkingDirectory=/home/scripts/libs
+PIDFile=/var/run/gpio-monitor.py.pid
+ExecStart=/home/scripts/daemons/gpio-monitor.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

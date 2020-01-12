@@ -1,0 +1,17 @@
+[Unit]
+Description=Telegram Bot
+After=syslog.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+WorkingDirectory=/home/scripts/libs
+PIDFile=/var/run/telegram-bot.py.pid
+ExecStart=/home/scripts/daemons/telegram-bot.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

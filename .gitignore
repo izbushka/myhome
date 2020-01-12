@@ -1,0 +1,8 @@
+*.pyc
+*.swp
+db/nohup.out
+/tmp
+actions/test.py
+/zwave/home/
+/google-assistant/env/lib/
+.github
