@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*-
+
+httplib2
+requests
+lockfile
+RPi.GPIO
+python-openzwave
+python-miio
+texttable
+zc.lockfile
+setuptools
+wheel
+google-assistant-sdk[samples]
+google-auth-oauthlib[tool]
