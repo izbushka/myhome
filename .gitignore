@@ -2,7 +2,9 @@
 *.swp
 db/nohup.out
 /tmp
+/test
 actions/test.py
 /zwave/home/
 /google-assistant/env/lib/
 .github
+venv/

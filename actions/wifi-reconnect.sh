@@ -8,3 +8,4 @@
 # Notify mirage
 date=`date`
 /home/scripts/actions/send-fcm.py 23 "Wifi Reconnected $date"
+/home/scripts/actions/send-telegram.py 23 "Wifi Reconnected $date"

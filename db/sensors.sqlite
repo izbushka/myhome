@@ -5,13 +5,22 @@ CREATE TABLE actions (action_id INTEGER PRIMARY KEY, name char(50), command char
 CREATE TABLE IF NOT EXISTS "states_log"(sensor_id integer, state char(5), updated DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')));
 CREATE TABLE commands (cmd_id INTEGER PRIMARY KEY, cmd varchar(255), interval int after cmd);
 CREATE TABLE IF NOT EXISTS "memcache" (key varchar(255) UNIQUE, val varchar(255), updated int unsigned, expired int unsigned);
+CREATE TABLE IF NOT EXISTS "sms_log"(`recipient` char(10), `sender` char(15), text char(255), date DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')));
+CREATE TRIGGER insert_sms AFTER INSERT ON sms_log
+BEGIN
+DELETE FROM sms_log WHERE rowid NOT IN (SELECT rowid FROM sms_log ORDER BY date DESC limit 1000);
+END;
 CREATE TRIGGER update_states AFTER UPDATE ON states
+WHEN old.state <> new.state
 BEGIN
 INSERT INTO states_log VALUES (new.sensor_id, new.state, new.updated);
-DELETE FROM states_log WHERE rowid NOT IN (SELECT rowid FROM states_log ORDER BY updated DESC limit 2000);
+DELETE FROM states_log WHERE sensor_id = new.sensor_id AND rowid NOT IN (SELECT rowid FROM states_log WHERE sensor_id=new.sensor_id  ORDER BY updated DESC limit 20);
 END;
 CREATE TRIGGER insert_states AFTER INSERT ON states
 BEGIN
 INSERT INTO states_log VALUES (new.sensor_id, new.state, new.updated);
-DELETE FROM states_log WHERE rowid NOT IN (SELECT rowid FROM states_log ORDER BY updated DESC limit 2000);
+END;
+CREATE TRIGGER delete_states AFTER DELETE ON states
+BEGIN
+DELETE FROM states_log WHERE sensor_id = old.sensor_id;
 END;

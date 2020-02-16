@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 #
 import sys
@@ -14,10 +14,11 @@ cmd = sys.argv[2]
 mySensors = mySensors()
 
 newState = subprocess.Popen(cmd, stdout=subprocess.PIPE).stdout.read().strip()
+newState = str(newState, 'utf-8')
 
-prevState = mySensors.getSensors({'sensor_id': sensor_id}).values();
+prevState = mySensors.getSensor(sensor_id);
 try:
-    prevState = prevState[0]['state']
+    prevState = prevState['state']
 except:
     prevState = 'UNKNOWN'
 

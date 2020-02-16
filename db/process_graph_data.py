@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 #
@@ -42,7 +42,7 @@ now = datetime.datetime.now()
 date = yesterday.strftime('%Y-%m-%d') if checkIfMidnight() else now.strftime('%Y-%m-%d')
 if len(sys.argv)>1:
     date = sys.argv[1]
-    print "USING DATE " + date
+    print("USING DATE " + date)
 for sensor in sensors:
     DB.execute("""
         SELECT *, TIME(`updated`) AS `time`
@@ -52,8 +52,7 @@ for sensor in sensors:
     raw_data = DB.fetchall();
 
     # create time interval every 30 min (48 valued a day)
-    intervalData = range(0, 48)
-    for i in range(0, 48): intervalData[i] = 0
+    intervalData = [0] * 48
 
     # Previous value
     DB.execute("""
@@ -73,6 +72,9 @@ for sensor in sensors:
     for raw in raw_data:
         if raw['value'] in ['ON', 'OFF']:
             raw['value'] = int(raw['value'] == 'ON')
+        if raw['value'] in ['PON', 'POFF']:
+            raw['value'] = 1
+
         value = round(raw['value'],2);
         if prevRawValue is None:
             prevRawValue = value

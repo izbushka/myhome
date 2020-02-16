@@ -1,8 +1,7 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 
 #str(sys.argv)
 import sys, os
-import string
 import json
 import time
 sys.path.append('/home/scripts/libs')
@@ -20,12 +19,13 @@ data = [[]]
 for id, sensor in sensors.items():
     del sensor['updated']
     del sensor['group']
+    del sensor['type']
     if not header:
-        header = sensor.keys()
+        header = list(sensor.keys())
         header[0] = 'ID'
         #header[5] = 'Changed'
     #print sensor['name']
-    if sensor['localTime']: sensor['localTime'] = string.replace(sensor['localTime'][5:], '-', '/')
+    if sensor['localTime']: sensor['localTime'] = sensor['localTime'][5:].replace('-', '/')
     if sensor['duration']: 
         _days = int(int(sensor['duration']) / (3600*24));
         _format = '%H:%M' if sensor['duration'] > 20*3600  else '%H:%M:%S'
@@ -60,5 +60,5 @@ tab.set_precision(1)
 tab.header(header)
 
 tab.set_cols_width([2, 20, 6, 8, (11 + (int(termW) - 80)), 14])
-print tab.draw()
+print(tab.draw())
 

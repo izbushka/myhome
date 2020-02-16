@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 
 # WARNING! This script runs under virtualenv (/home/python-openzwave/)

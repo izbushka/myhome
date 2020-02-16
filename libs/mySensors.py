@@ -73,7 +73,7 @@ class mySensors:
                 grp = sensor['sensor'].split(':')
                 sensors[id]['group'] = {
                     'logic': grp[0],
-                    'sensors': map(int, grp[1].split(','))
+                    'sensors': [int(x) for x in grp[1].split(',')]
                 }
         self.reloadGraphs();
         return sensors.copy()
@@ -105,7 +105,7 @@ class mySensors:
                     where += ' AND `%s` = "%s" ' % (field, str(data))
 
         self.DB.execute("""
-            SELECT sensor_id, state, updated, sensor, name, `group`,
+            SELECT sensor_id, state, updated, sensor, name, `group`, type,
                 datetime(updated, 'localtime') as localTime,
                 (strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', updated) ) as duration
             FROM sensors
@@ -126,9 +126,9 @@ class mySensors:
             return {}
 
     def getSensorState(self, id):
-        state = self.getSensors({'sensor_id': id}).values()
+        state = self.getSensor(id)
         try:
-            state = state[0]['state']
+            state = state['state']
         except:
             state = ''
         return state

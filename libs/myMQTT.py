@@ -21,7 +21,7 @@ class myMQTT:
     MQTTuser = myConfig.get('mqtt', 'user')
     MQTTpass = myConfig.get('mqtt', 'password')
     MQTTbroker = myConfig.get('mqtt', 'host')
-    MQTTport = myConfig.get('mqtt', 'port')
+    MQTTport = int(myConfig.get('mqtt', 'port'))
 
     client = None
 
@@ -68,7 +68,7 @@ class myMQTT:
                 sensors.saveSensorState(sensor['sensor_id'], state, commit)
                 sensors.closeDB()
                 self.log("Switched sensor " + str(sensor['sensor_id']) + " " + state)
-            except Exception, e:
+            except Exception as e:
                 self.log("*** ERROR *** " + str(e))
                 pass
             ok = True

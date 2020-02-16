@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 #
 #str(sys.argv)
@@ -23,5 +23,5 @@ data = {
 }
 fcmOk = fcm.send('pi',data); 
 
-print 'ON' if ok and fcmOk else 'OFF'
+print('ON' if ok and fcmOk else 'OFF')
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 #
@@ -26,6 +26,7 @@ class StatesMonitor:
         self.lastRun = {} #save last action run time (delay)
         self.lastChange = {} # time of last changes
         self.lastCmdRun = {} # time of last run of cmd (not sensor)
+        self.sensorsStates = {} # sensors cur state
     
     def log(self, data):
         self.mySensors.log(data)
@@ -40,7 +41,7 @@ class StatesMonitor:
         sensor_id = state['sensor_id']
         if command['on'] == 'BOTH' or state['state'] in command['on'].split(','):
             cmd = '/home/scripts/actions/' + str(command['cmd'])
-            if not self.lastCmdRun.has_key(cmd):
+            if cmd not in self.lastCmdRun:
                 self.lastCmdRun[cmd] = 0
             self.log('RUN: Sensor: ' + str(sensor_id) + ' State:' + str(state['state']) + ' LastRun: ' + str(self.lastCmdRun[cmd]) + ' cmd:' + cmd);
             #print (cmd)
@@ -58,7 +59,7 @@ class StatesMonitor:
                 grp_state = True if group['logic'] == 'AND' else False
                 # перебираем сенсоры группы
                 for sensor_id in group['sensors']:
-                    if not self.sensorsStates.has_key(sensor_id):
+                    if sensor_id not in self.sensorsStates:
                         grp_state = False
                         break
                     if group['logic'] == 'OR': # логика группы ИЛИ
@@ -72,7 +73,7 @@ class StatesMonitor:
                         if not grp_state:
                             break
                 curState = 'ON' if grp_state else 'OFF'
-                if not self.sensorsStates.has_key(id) or self.sensorsStates[id]['state'] != curState:
+                if id not in self.sensorsStates or self.sensorsStates[id]['state'] != curState:
                     self.sensorsStates[id] = self.mySensors.saveSensorState(id, curState)
                     changed = True
 
@@ -82,29 +83,29 @@ class StatesMonitor:
                 # monitored sensor state matches wanted state
                 if self.sensorsStates[monitorId]['state'] == monitorState:
                     # current sensor state doesn't exist or it's OFF - need to check delay
-                    if not self.sensorsStates.has_key(id) or not self.sensorsStates[id]['state'] == 'ON':
+                    if id not in self.sensorsStates or not self.sensorsStates[id]['state'] == 'ON':
                         format = '%Y-%m-%d %H:%M:%S' if self.sensorsStates[monitorId]['updated'].index('.') < 0 else '%Y-%m-%d %H:%M:%S.%f'
                         updated = datetime.strptime(self.sensorsStates[monitorId]['updated'], format)
                         now = datetime.utcnow()
                         # delay passed
                         if (now - updated).total_seconds() >= int(monitorDelay):
-                            if not self.sensorsStates.has_key(id) or not self.sensorsStates[id]['state'] == 'ON':
+                            if id not in self.sensorsStates or not self.sensorsStates[id]['state'] == 'ON':
                                 self.sensorsStates[id] = self.mySensors.saveSensorState(id, 'ON')
                                 #print ("update sens 16")
                                 changed = True
                         #delay not passed - turning sensor to OFF unless it's already set
-                        elif not self.sensorsStates.has_key(id) or not self.sensorsStates[id]['state'] == 'OFF':
+                        elif id not in self.sensorsStates or not self.sensorsStates[id]['state'] == 'OFF':
                             self.sensorsStates[id] = self.mySensors.saveSensorState(id, 'OFF')
                             changed = True
                 # turning sensor off unless it's already set
-                elif not self.sensorsStates.has_key(id) or not self.sensorsStates[id]['state'] == 'OFF':
+                elif id not in self.sensorsStates or not self.sensorsStates[id]['state'] == 'OFF':
                     self.sensorsStates[id] = self.mySensors.saveSensorState(id, 'OFF')
                     changed = True
           
             elif sensor['type'] == 'compare': # sensor type = compare
                 rule = json.loads(sensor['sensor'])
                 newState = "OFF";
-                if self.sensorsStates.has_key(rule['id']): # if target sensor exists. otherwise wait for it to change
+                if rule['id'] in self.sensorsStates: # if target sensor exists. otherwise wait for it to change
                     thatValue = float(self.sensorsStates[rule['id']]['state'])
                     # pick selected logic
                     if rule['logic'] == 'greater':
@@ -124,7 +125,7 @@ class StatesMonitor:
                         if thatValue < float(rule['min']) or thatValue > float(rule['max']):
                             newState = "ON"
                     # if "compare" sensor changed
-                    if not self.sensorsStates.has_key(id) or newState != self.sensorsStates[id]['state']:
+                    if id not in self.sensorsStates or newState != self.sensorsStates[id]['state']:
                         self.sensorsStates[id] = self.mySensors.saveSensorState(id, newState)
                         changed = True
 
@@ -140,15 +141,15 @@ class StatesMonitor:
             self.sensorsStates = self.mySensors.getSensors()
             _speedup = self.updateSensorStates()
             for id, state in self.sensorsStates.items(): # for each sensor
-                if not self.lastChange.has_key(id): #for first run
+                if id not in self.lastChange: #for first run
                      self.lastChange[id] = state['updated']
                      self.lastRun[id] = {} # initial value
-                if self.sensors.has_key(id): #if known (monitored) sensor
+                if id in self.sensors: #if known (monitored) sensor
                     if not (state['updated'] == self.lastChange[id]): # if changed
                         self.lastRun[id] = {'updated': True} # reset last run time
                         #self.log("DETECTED: Sensor " + str(id) + ' is ' + state['state'] + ' ' + state['updated'])
                         _speedup = True
-                    if self.lastRun[id].has_key('updated') and self.sensors[id]['command']:
+                    if 'updated' in self.lastRun[id] and self.sensors[id]['command']:
                         runDelay = -1
                         AllActionsDone = True # Flag: Are all actions executed with all delays for this sensor? 
                         for cmd in self.sensors[id]['command']:
@@ -156,14 +157,14 @@ class StatesMonitor:
                             maxRunDelay = cmd['delay'] + (cmd['runs'] - 1) * cmd['repeat_delay']
                             #self.log('CMDid: ' + cmdID + ' maxDelay ' + str(maxRunDelay) + str(cmd))
                             # max delay reached for this cmd
-                            if self.lastRun[id].has_key(cmdID) and maxRunDelay <= self.lastRun[id][cmdID]: continue
+                            if cmdID in self.lastRun[id] and maxRunDelay <= self.lastRun[id][cmdID]: continue
                             AllActionsDone = False
                             # check for delayed runs
                             for run in range(0, cmd['runs']):
                                 runDelay = cmd['delay'] + run * cmd['repeat_delay']
                                 # state['duration'] - из базы, округленное до секунды.
                                 if ( state['duration'] >= runDelay and 
-                                     ( not self.lastRun[id].has_key(cmdID) 
+                                     ( cmdID not in self.lastRun[id] 
                                          or self.lastRun[id][cmdID] < runDelay 
                                      )
                                    ):
@@ -207,5 +208,7 @@ def _start():
     m = StatesMonitor()
     m.main()
 
-#_start()
-runAsDaemon(_start, _cleanup, _reload);
+if len(sys.argv) > 1 and sys.argv[1] == 'no-daemon':
+    _start()
+else:
+    runAsDaemon(_start, _cleanup, _reload)

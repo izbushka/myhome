@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 # Выключает выключатели света через zwave
 # Аргументы:

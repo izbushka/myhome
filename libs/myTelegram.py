@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys, os
 import json
-import httplib2
 import time
 import urllib
 import subprocess
 import re
 sys.path.append('/home/scripts/libs')
+sys.path.append('/home/scripts/libs/github/httplib2/python3')
+import httplib2
 from MultipartFormdataEncoder import MultipartFormdataEncoder
 from myLogs import myLogs
 from myFCM import myFCM
@@ -15,6 +16,7 @@ from myConfig import myConfig
 class myTelegram:
     TOKEN = myConfig.get('telegram', 'token')
     URL = "https://api.telegram.org/bot{}/"
+    #URL = "https://izbushka.kiev.ua/tmp/test.json?{}"
     
     def __init__(self):
         self.URL = self.URL.format(self.TOKEN)
@@ -44,7 +46,10 @@ class myTelegram:
                 if response.status == 200:
                     content = data.decode("utf8")
                     return content
+                else:
+                    self.log("Got non-200 response: " + str(response.status) + ": " + data.decode("utf8"))
             except Exception as e:
+                self.log("Cann't fetch url: " + str(e))
                 attempts -= 1
                 if (attempts < 1):
                     #fcm = myfcm();

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 #
 #str(sys.argv)
@@ -16,7 +16,7 @@ if len(sys.argv) > 3:
 sensorName = ''
 if (sys.argv[1].isdigit()):
     mySensors = mySensors()
-    sensorName = mySensors.getSensors({ 'sensor_id': sys.argv[1] }).values()[0]['name'] + ' '; 
+    sensorName = mySensors.getSensor(sys.argv[1])['name'] + ' '; 
 
 args = sys.argv[2:]
 #print("/home/scripts/actions/google-assistant-broadcast.sh '" + sensorName + ' is ' +  str(args[0]) + "'")

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 # Выключает выключатели света через mqtt
 # Аргументы:
@@ -17,7 +17,7 @@ state = sys.argv[2]
 
 json = (state[0:1] == '{')
 if (state == 'PON' or state == 'POFF' or json):
-    print (str(sensor_id) + " " + state);
+    #print (str(sensor_id) + " " + state);
     myMQTT = myMQTT()
     myMQTT.connect()
     action = 'ON' if sys.argv[2] == 'PON' or sys.argv[2] == 'ON' else 'OFF';

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 __version__="0.1.0"
 
@@ -33,7 +33,7 @@ class SensorMonitor:
         for id, group in self.mySensors.getSensors({ 'type': 'gpio-group' }).items():
             grp = group['sensor'].split(':')
             group['logic'] = grp[0]
-            group['sensors'] = map(int, grp[1].split(','))
+            group['sensors'] = [int(x) for x in grp[1].split(',')]
             self.sensorGroups.append(group.copy())
 
     def save(self):
@@ -99,4 +99,8 @@ def _start():
     m = SensorMonitor()
     m.main()
 
-runAsDaemon(_start, _cleanup, _reload);
+if len(sys.argv) > 1 and sys.argv[1] == 'no-daemon':
+    _start()
+else:
+    runAsDaemon(_start, _cleanup, _reload)
+

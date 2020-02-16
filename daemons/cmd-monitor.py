@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 #
@@ -34,7 +34,7 @@ class CmdMonitor:
         while True:
             for id, state in self.sensors.items(): # for each sensor
                 now = int(time.time())
-                if not self.lastRun.has_key(id):
+                if not id in self.lastRun:
                     # initial value
                     self.lastRun[id] = {'time': now}
                 if self.lastRun[id]['time'] + state['interval'] < now:
@@ -58,5 +58,8 @@ def _start():
     m = CmdMonitor()
     m.main()
 
-#_start()
-runAsDaemon(_start, _cleanup, _reload);
+if len(sys.argv) > 1 and sys.argv[1] == 'no-daemon': 
+    _start()
+else:
+    runAsDaemon(_start, _cleanup, _reload)
+

@@ -1,4 +1,4 @@
-#!/home/python-virtualenv/xiaomi/bin/python
+#!/home/scripts/venv/python3/bin/python3
 # -*- coding: utf-8 -*-
 
 __version__="0.1.0"
@@ -32,6 +32,8 @@ def _reload(signum, frame):
     pass
 
 
-runAsDaemon(_start, _cleanup, _reload);
-#_start()
+if len(sys.argv) > 1 and sys.argv[1] == 'no-daemon':
+    _start()
+else:
+    runAsDaemon(_start, _cleanup, _reload)
 
