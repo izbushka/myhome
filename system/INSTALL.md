@@ -95,6 +95,6 @@ systemctl enable mosquitto
 
 # create sqlite databases
 
-# setup watchdog
+# setup watchdog (by systemd)
 
 # setup syslog
