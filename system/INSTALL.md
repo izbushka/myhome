@@ -97,5 +97,6 @@ git clone backup.local:/home/scripts .
 # create sqlite databases
 
 # setup watchdog (by systemd)
-
+* cat system/etc/rsyncd.conf > /etc/systemd/system.conf
 # setup syslog
+* cat system/etc/rsyslog.conf > etc/rsyslog.conf
