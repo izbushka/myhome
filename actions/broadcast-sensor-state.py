@@ -22,3 +22,16 @@ args = sys.argv[2:]
 #print("/home/scripts/actions/google-assistant-broadcast.sh '" + sensorName + ' is ' +  str(args[0]) + "'")
 os.system("/home/scripts/actions/google-assistant-broadcast.sh '" + sensorName + ' is ' +  str(args[0]) + "'")
 os.system("echo '" + sensorName + ' is ' +  str(args[0]) + "' | /usr/bin/festival --tts")
+
+
+fcm = myFCM();
+data = {
+'message': {
+    'message': sensorName + ' is ' +  str(args[0]),
+    'text': sensorName + ' is ' +  str(args[0]),
+    'cmd': 'showAlert',
+    'from': 'raspberry',
+    }
+}
+fcm.send('group=chrome',data);
+#fcm.send('mirageLG,taniaLG',data);

@@ -59,17 +59,20 @@ class StatesMonitor:
                 grp_state = True if group['logic'] == 'AND' else False
                 # перебираем сенсоры группы
                 for sensor_id in group['sensors']:
+                    inverted = False if sensor_id > 0 else True
+                    sensor_id = abs(sensor_id)
+                    trueState = 'OFF' if inverted else 'ON'
                     if sensor_id not in self.sensorsStates:
                         grp_state = False
                         break
                     if group['logic'] == 'OR': # логика группы ИЛИ
-                        grp_state = self.sensorsStates[sensor_id]['state'] == 'ON'
+                        grp_state = self.sensorsStates[sensor_id]['state'] == trueState
                         if grp_state:
                             break
                     elif group['logic'] == 'XOR': # логика группы XOR
-                        grp_state = (self.sensorsStates[sensor_id]['state'] == 'ON') != grp_state
-                    else: # логика группы И
-                        grp_state = self.sensorsStates[sensor_id]['state'] == 'ON'
+                        grp_state = (self.sensorsStates[sensor_id]['state'] == trueState) != grp_state
+                    elif group['logic'] == 'AND': # логика группы И
+                        grp_state = self.sensorsStates[sensor_id]['state'] == trueState
                         if not grp_state:
                             break
                 curState = 'ON' if grp_state else 'OFF'
