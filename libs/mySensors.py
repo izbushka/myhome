@@ -114,6 +114,12 @@ class mySensors:
         """ + where)
         sensorsStates = {}
         for state in self.DB.fetchall():
+            # declare properties in case of empty state (new sensor?)
+            if not 'updated'   in state: state['updated'] = None
+            if not 'localTime' in state: state['localTime'] = None
+            if not 'state'     in state: state['state'] = None
+            if not 'duration'  in state: state['duration'] = None
+
             id = state['sensor_id']
             sensorsStates[id] = state.copy()
         return sensorsStates.copy()

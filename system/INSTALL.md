@@ -1,6 +1,8 @@
 # Initial raspberry setup:
 * Set Wifi, Timezone in `sudo raspi-config`
 * enable ssh: `sudo systemctl enable ssh`
+sudo systemctl enable systemd-timesyncd.service
+sudo systemctl start systemd-timesyncd.service
 # Update system
 * sudo apt update
 * sudo apt upgrade
@@ -37,7 +39,7 @@ git clone backup.local:/home/scripts .
 * sudo apt install git vim mc screen
 * sudo apt install python3-venv
 * sudo apt install sqlite3
-* sudo apt install ntpdate ntp tcpdump telnet
+* sudo apt install ntpdate tcpdump telnet
 * sudo apt install msmtp msmtp-mta bsd-mailx
 * sudo apt install mosquitto mosquitto-clients
 * sudo apt install mpg123 ffmpeg festival
@@ -75,7 +77,11 @@ git clone backup.local:/home/scripts .
 * cat system/etc/rsyncd.conf > /etc/rsyncd.conf
 * cat system/etc/rsync.pass > /etc/rsync.pass
 
+* cat system/etc/msmtprc > /etc/msmtprc
+
 * cp daemons/*service /etc/systemd/system/
+* chmod 644 /etc/systemd/system/*-monitor.service
+* chmod 644 /etc/systemd/system/telegram-bot.service
 * systemctl enable arduino-monitor.service
 * systemctl enable cmd-monitor.service
 * systemctl enable fcm-monitor.service
