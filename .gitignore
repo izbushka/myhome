@@ -8,3 +8,4 @@ actions/test.py
 /google-assistant/env/lib/
 .github
 venv/
+nginx/www/releases

@@ -21,6 +21,7 @@ if (sys.argv[1].isdigit()):
 args = sys.argv[2:]
 #print("/home/scripts/actions/google-assistant-broadcast.sh '" + sensorName + ' is ' +  str(args[0]) + "'")
 os.system("/home/scripts/actions/google-assistant-broadcast.sh '" + sensorName + ' is ' +  str(args[0]) + "'")
+os.system("/usr/bin/amixer -q set PCM 100%")
 os.system("echo '" + sensorName + ' is ' +  str(args[0]) + "' | /usr/bin/festival --tts")
 
 

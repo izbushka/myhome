@@ -51,7 +51,7 @@ def _cleanup(signum, frame):
 def _reload(signum, frame):
     m.log('Reloading...')
     m.save()
-    m.getSensorsActions()
+    #m.getSensorsActions()
 
 def _start():
     global m

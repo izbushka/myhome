@@ -8,7 +8,7 @@ import subprocess
 sys.path.append('/home/scripts/libs')
 from mySensors import mySensors
 
-sensor_id = sys.argv[1]
+sensor_id = int(sys.argv[1])
 cmd = sys.argv[2]
 
 mySensors = mySensors()

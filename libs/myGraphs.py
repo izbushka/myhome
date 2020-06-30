@@ -38,6 +38,7 @@ class myGraphs:
 
     def addData(self, id, value, commit = False):
         added = False
+        id = int(id)
         if id in self.sensors:
             self.DB.execute("""
                 INSERT INTO `sensors_data` (sensor_id, value)
@@ -46,8 +47,9 @@ class myGraphs:
             added = True
             if commit:
                 self.db.commit()
+                added = False
+        return added
 
     def commit(self):
-        if commit:
-            self.db.commit()
+        self.db.commit()
 

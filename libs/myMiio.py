@@ -43,8 +43,13 @@ class myMiio:
         self.getDevices()
         self.getSensors()
 
+        self.logHandler = myLogs('miio-class', 0o666)
+
     def closeDB(self): 
         self.mySensors.closeDB();
+
+    def log(self, data):
+        self.logHandler.log(data)
 
     def getDevices(self):
         self.devices = {}
@@ -97,9 +102,9 @@ class myMiio:
                                 if value != device['state']:
                                     self.mySensors.saveSensorState(id, value)
                             elif self.updateSensorByDevice(id, type, value):
-                                #print(sensor)
                                 pass
-                except DeviceException:
+                except DeviceException as e:
+                    self.log('Error getting device state: ' + str(e))
                     self.mySensors.saveSensorState(id, 'ERR')
         self.commit()
     def commit(self):

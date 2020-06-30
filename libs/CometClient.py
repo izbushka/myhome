@@ -32,14 +32,22 @@ class CometClient(object):
             self.handle_response(resp.content)
             self.errorCount = 0;
             #print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] +  " Got message " + resp.content)
-        except requests.exceptions.Timeout:
+        except requests.exceptions.Timeout: # it is planned timeout to make sure it is alive on reconnect
             #print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] +  " Connection Timeout")
             pass
         except requests.exceptions.ConnectionError:
             print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] +  " Connection Error")
             self.errorCount += 1
             time.sleep(1)
-            raise Exception('Too many connection failures. Restart needed')
+            if (self.errorCount > 3):
+                raise Exception('Too many connection failures. Restart needed')
+            pass
+        except:
+            print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] +  " Unknown exception (TODO to find out)")
+            self.errorCount += 1
+            time.sleep(1)
+            if (self.errorCount > 3):
+                raise Exception('Too many exceptions. Restart needed')
             pass
 
     def handle_response(self, response):

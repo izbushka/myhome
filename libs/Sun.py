@@ -29,10 +29,9 @@ class Sun:
             data['decimal'] += self.getOffsetUTC()
             data['hr'] += self.getOffsetUTC()
         data['hr'] = int(data['hr'])
-        h = str(int(data['hr'])) if data['hr'] > 10 else '0' + str(int(data['hr'])); 
-        m = str(int(data['min'])) if data['min'] > 10 else '0' + str(int(data['min'])); 
+        h = str(int(data['hr'])) if data['hr'] >= 10 else '0' + str(int(data['hr']));
+        m = str(int(data['min'])) if data['min'] >= 10 else '0' + str(int(data['min']));
         data['time'] = h + ':' + m
-
         return data
 
     def getCurrentUTC( self ):
@@ -40,7 +39,9 @@ class Sun:
         return [ now.day, now.month, now.year ]
 
     def getOffsetUTC( self ):
-        return -time.timezone / 3600;
+        ts = time.time()
+        utc_offset = datetime.datetime.fromtimestamp(ts) - datetime.datetime.utcfromtimestamp(ts)
+        return utc_offset.total_seconds() / 3600;
 
     def calcSunTime( self, coords, isRiseTime, zenith = 90.8 ):
 
@@ -119,7 +120,9 @@ class Sun:
         #10. Return
         hr = self.forceRange(int(UT), 24)
         min = round((UT - int(UT))*60,0)
-
+        if (min > 59):
+            min = 59
+        
         return {
             'status': True,
             'decimal': UT,

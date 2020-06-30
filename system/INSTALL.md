@@ -106,3 +106,12 @@ git clone backup.local:/home/scripts .
 * cat system/etc/rsyncd.conf > /etc/systemd/system.conf
 # setup syslog
 * cat system/etc/rsyslog.conf > etc/rsyslog.conf
+
+
+# Festival voices:
+wget http://www.speech.cs.cmu.edu/cmu_arctic/packed/cmu_us_slt_arctic-0.95-release.tar.bz2  
+unpack, move to /usr/share/festival/voices/us/cmu_us_slt_arctic_clunits
+(notice: us folder and clunits postfix)
+
+(Other voices (install into us folder without postfix): http://festvox.org/packed/festival/2.4/ http://festvox.org/packed/festival/2.5/voices/)
+ 

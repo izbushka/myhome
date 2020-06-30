@@ -36,8 +36,10 @@ def getDaemonContext(program_cleanup, program_reload):
         shutil.copy(filename, filename + '.old')
 
     error_log = open(filename, "w+", 1)
-    context.stdout = error_log
-    context.stderr = error_log
+    context.stdout = Unbuffered(error_log)
+    context.stderr = Unbuffered(error_log)
+    #context.stdout = error_log
+    #context.stderr = error_log
 
     # Check for stale pid file
     if daemon.runner.is_pidfile_stale(pidfile):
@@ -56,10 +58,22 @@ def getDaemonContext(program_cleanup, program_reload):
 
 def runAsDaemon(_start, program_cleanup, program_reload):
     try:
-        print("Starting..")
+        scriptName = os.path.basename(sys.argv[0])
+        print("Starting daemon " + scriptName)
         with getDaemonContext(program_cleanup, program_reload):
-            print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + " Starting..")
+            print (datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + " Starting..", flush=True)
             _start()
     except lockfile.LockTimeout:
         syslog.syslog("Another copy is running. Exiting")
 
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def writelines(self, datas):
+       self.stream.writelines(datas)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)

@@ -20,6 +20,7 @@ import json
 def _start():
     miio = myMiio()
     while True:
+        miio.getDevices()
         miio.updateStates()
         miio.commit()
         time.sleep(60)
