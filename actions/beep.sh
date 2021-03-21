@@ -7,8 +7,8 @@
 
 if [ "$2" == "ON" ] 
 then 
-    mpg123 -q --pitch 0.1 -d 2 /home/db/tts/beep.mp3
+#    mpg123 -q --pitch 0.1 -d 2 /home/db/tts/beep.mp3
 else 
-    mpg123 -q /home/db/tts/beep.mp3
+#    mpg123 -q /home/db/tts/beep.mp3
 fi
 

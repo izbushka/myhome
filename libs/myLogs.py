@@ -5,8 +5,12 @@ sys.path.append('/home/scripts/libs')
 import myDB
 
 class myLogs():
+    sizeLimit = 100000
 
-    def __init__(self, filename = 'myLog', perm = 0o644):
+    def __init__(self, filename = 'myLog', perm = 0o644, sizeLimit = 0):
+        if (sizeLimit > 0):
+            self.sizeLimit = sizeLimit
+        
         self.filename = '/home/ram/' + filename + '.log'
         self.openLog(perm)
 
@@ -18,7 +22,7 @@ class myLogs():
             pass
 
     def log(self, data):
-        if (os.path.getsize(self.filename) > 100000):
+        if (os.path.getsize(self.filename) > self.sizeLimit):
             self.closeLog()
             os.rename(self.filename, self.filename + '.old')
             self.openLog()

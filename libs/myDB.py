@@ -23,3 +23,9 @@ class use(sqlite3.Connection):
     def backup_database(self):
         os.system("/bin/bash /home/scripts/db/db2ram.sh " + self.currentDB + ' backup')
 
+    # TODO: calling DB.use() in multithred program causes 4kb memory leak everytime.
+    # play with def close(self) (untested), or better to set queued multithred connection
+    #def close(self):
+        #self.cursor().close()
+        #super().close()
+

@@ -24,9 +24,13 @@ class mySensors:
 
     def closeDB(self):
         self.saveDB()
+        self.DB.close()
         self.db.close();
+        self.db = None
+        self.DB = None
         if not (self.Graphs is None):
             self.Graphs.closeDB()
+        self.Graphs = None
 
     def updateGraphs(self, sensor_id, value, commit = True):
         if self.Graphs is None:

@@ -10,5 +10,8 @@ texttable
 zc.lockfile
 setuptools
 wheel
+pyserial
+esptool
+python-aqi
 google-assistant-sdk[samples]
 google-auth-oauthlib[tool]

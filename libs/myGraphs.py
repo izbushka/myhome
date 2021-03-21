@@ -22,6 +22,7 @@ class myGraphs:
         self.DB = self.db.cursor()
 
     def closeDB(self):
+        self.DB.close()
         self.db.close()
 
     def getSensors(self):

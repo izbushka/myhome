@@ -107,6 +107,10 @@ git clone backup.local:/home/scripts .
 # setup syslog
 * cat system/etc/rsyslog.conf > etc/rsyslog.conf
 
+# WiringPi for 315send:
+cd /tmp
+wget https://project-downloads.drogon.net/wiringpi-latest.deb
+sudo dpkg -i wiringpi-latest.deb
 
 # Festival voices:
 wget http://www.speech.cs.cmu.edu/cmu_arctic/packed/cmu_us_slt_arctic-0.95-release.tar.bz2  

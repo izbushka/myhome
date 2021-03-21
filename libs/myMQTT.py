@@ -3,7 +3,7 @@
 # WARNING! This script runs under virtualenv (/home/python-openzwave/)
 # it has it's own libriries
 
-import sys, os
+import sys
 import subprocess
 import string
 import datetime
@@ -42,6 +42,7 @@ class myMQTT:
             if not sensor['sensor_id'] in self.sensorsByID: self.sensorsByID[sensor['sensor_id']] = {} 
             self.sensorsByID[str(sensor['sensor_id'])] = sensor.copy()
         sensorsDB.closeDB()
+        del sensorsDB
 
     def getSensorByAddr(self, addr):
         try:
@@ -62,11 +63,20 @@ class myMQTT:
         self.log(str(addr) + " " + state)
         if sensor and 'sensor_id' in sensor:
             try:
-                # unable to use self.mySensors - mqtt callback is in another thred
                 #print(str(sensor['sensor_id']) + " " + state)
-                sensors = mySensors()
-                sensors.saveSensorState(sensor['sensor_id'], state, commit)
-                sensors.closeDB()
+                
+                # WARNING!
+                # 1. unable to use self.mySensors - mqtt callback is in another thred
+                # 2. unable to update DB here - memory leak, every updateSensorByAddr leak 4kb
+                # 3. tmp solution - actions/save_sensor_state.py
+                # TODO: sqlite multithread (queue to standalone process)
+
+                #sensors = mySensors()
+                #sensors.saveSensorState(sensor['sensor_id'], state, commit)
+                #sensors.closeDB()
+
+                subprocess.Popen(['/home/scripts/actions/save_sensor_state.py', str(sensor['sensor_id']), state]);
+
                 self.log("Switched sensor " + str(sensor['sensor_id']) + " " + state)
             except Exception as e:
                 self.log("*** ERROR *** " + str(e))
@@ -74,6 +84,7 @@ class myMQTT:
             ok = True
         #else: 
             #raise Exception("Sensor '" + addr + "' not found.") 
+        del sensor
         return ok
 
     def commit(self):
@@ -124,10 +135,13 @@ class myMQTT:
                     sensor = self.sensorsByAddr[addr]
                     if sensor['group'] == 'light-switch':
                         self.updateSensorByAddr(addr, 'ERR');
+        del topic
+        del data
     
     def log(self, msg):
-        logs = myLogs('mqtt-messages')                                                                    
+        logs = myLogs('mqtt-messages')
         logs.log(msg)
+        pass
 
     def connect(self, subscribe = False):
         self.doSubscribe = subscribe
