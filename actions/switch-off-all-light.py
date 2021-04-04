@@ -14,22 +14,8 @@ from mySensors import mySensors
 
 mySensors = mySensors()
 
-sensors = mySensors.getSensors({"type":"zwave"}).values()
+sensors = mySensors.getSensors({"group":"light-switch"}).values()
 for sensor in sensors:
-    if sensor['state'] == 'ON' and sensor['group'] == 'light-switch':
-        zwaveID = str(sensor['sensor'])
-        subprocess.Popen(['/home/scripts/zwave/zwave-switch.py', zwaveID, '0'])
+    if sensor['state'] != 'OFF':
+        mySensors.saveSensorState(sensor['sensor_id'], 'POFF', True)
         time.sleep(2)
-
-sensors = mySensors.getSensors({"type":"arduino"}).values()
-for sensor in sensors:
-    if sensor['state'] == 'ON' and sensor['group'] == 'light-switch':
-        subprocess.Popen(['/home/scripts/actions/arduino-switch.py', str(sensor['sensor_id']), 'POFF'])
-        time.sleep(2)
-
-sensors = mySensors.getSensors({"type":"mqtt"}).values()
-for sensor in sensors:
-    if sensor['state'] == 'ON' and sensor['group'] == 'light-switch':
-        subprocess.Popen(['/home/scripts/actions/mqtt-switch.py', str(sensor['sensor_id']), 'POFF'])
-        time.sleep(2)
-

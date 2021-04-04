@@ -9,3 +9,4 @@ actions/test.py
 .github
 venv/
 nginx/www/releases
+/**/node_modules/

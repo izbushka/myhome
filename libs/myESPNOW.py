@@ -125,31 +125,36 @@ class myESPNOW(serial.threaded.Protocol):
         return id
 
     def handleMessage(self, msg):
-        data = msg.split(';', 2)
-        sender = data[0]
-        topic = data[1]
-        payload = data[2]
-        addr = topic.split('/', 1)
+        try:
+            data = msg.split(';', 2)
+            sender = data[0]
+            topic = data[1]
+            payload = data[2]
+            addr = topic.split('/', 1)
 
-        senderName = self.getNodeIdName(sender)
+            senderName = self.getNodeIdName(sender)
 
-        self.log("INCOMING>" + senderName + " <" + topic + '> ' + payload)
-        if topic == 'ping':
-            self.updatePeers(senderName, payload)
+            self.log("INCOMING>" + senderName + " <" + topic + '> ' + payload)
+            if topic == 'ping':
+                self.updatePeers(senderName, payload)
 
-        elif topic == 'boot':
-            subprocess.Popen(['/home/scripts/actions/send-telegram.py', "debug", senderName, topic, payload]);
-        elif topic == 'OTA-RESPONSE':
-            with open('/home/ram/espnow-ota.log', 'w') as writer:
-                writer.write(payload)
-        elif topic == 'MSG-DROPPED':
-            self.log("MSG-DROPPED> TODO: Handle this: Node: " + senderName)
-        elif len(addr) > 1:
-            addr = addr[1]
-            if (self.getSensorByAddr(addr)):
-                #print(data[1])
-                state = json.loads(payload)['state']
-                self.updateSensorByAddr(addr, state)
+            elif topic == 'boot':
+                subprocess.Popen(['/home/scripts/actions/send-telegram.py', "debug", senderName, topic, payload]);
+            elif topic == 'OTA-RESPONSE':
+                with open('/home/ram/espnow-ota.log', 'w') as writer:
+                    writer.write(payload)
+            elif topic == 'MSG-DROPPED':
+                self.log("MSG-DROPPED> TODO: Handle this: Node: " + senderName)
+            elif len(addr) > 1:
+                addr = addr[1]
+                if (self.getSensorByAddr(addr)):
+                    #print(data[1])
+                    state = json.loads(payload)['state']
+                    self.updateSensorByAddr(addr, state)
+        except Exception as e:
+            self.log("*** ERROR HANDLING MESAGE *** " + str(e) + " MSG: " + msg)
+            pass
+
 
     def updatePeers(self, name, payload):
         self.updatePeer(name, payload)
